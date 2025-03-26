@@ -1,5 +1,6 @@
+import { CompressOutlined, ExpandOutlined } from "@ant-design/icons";
 import { parse } from "best-effort-json-parser";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useAutoScrollToBottom } from "~/components/hooks/useAutoScrollToBottom";
 import { useOnStateChangeEffect } from "~/components/hooks/useOnStateChangeEffect";
@@ -34,6 +35,10 @@ export function WorkflowProgressView({
 }) {
   const mainRef = useRef<HTMLDivElement>(null);
 
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [blockWidth, setBlockWidth] = useState(928);
+  const [blockHeight, setBlockHeight] = useState(400);
+
   const steps = useMemo(() => {
     return workflow.steps.filter((step) => step.agentName !== "reporter");
   }, [workflow]);
@@ -43,10 +48,26 @@ export function WorkflowProgressView({
 
   useAutoScrollToBottom(mainRef, !workflow.isCompleted);
 
+  useEffect(() => {
+    if (isExpanded) {
+      setBlockWidth(1200);
+      setBlockHeight(500);
+    } else {
+      setBlockWidth(928);
+      setBlockHeight(400);
+    }
+  }, [isExpanded]);
+
   return (
-    <div className="flex flex-col gap-4">
-      <div className={cn("flex overflow-hidden rounded-2xl border", className)}>
-        <aside className="flex w-[220px] shrink-0 flex-col border-r bg-[rgba(0,0,0,0.02)]">
+    <div className="relative flex flex-col gap-4">
+      <div
+        className={cn(
+          `flex h-[${blockHeight}px] w-[${blockWidth}px] overflow-hidden rounded-2xl border transition-all duration-300`,
+          className,
+          isExpanded && "translate-x-[-136px]",
+        )}
+      >
+        <aside className="relative flex w-[220px] shrink-0 flex-col border-r bg-[rgba(0,0,0,0.02)]">
           <div className="shrink-0 px-4 py-4 font-medium">Flow</div>
           <ol className="flex grow list-disc flex-col gap-4 px-4 py-2">
             {steps.map((step) => (
@@ -68,6 +89,20 @@ export function WorkflowProgressView({
               </li>
             ))}
           </ol>
+          <div className="absolute bottom-2 left-4">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                {isExpanded ? (
+                  <CompressOutlined onClick={() => setIsExpanded(false)} />
+                ) : (
+                  <ExpandOutlined onClick={() => setIsExpanded(true)} />
+                )}
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{isExpanded ? "Collapse" : "Expand"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </aside>
         <main className="grow overflow-auto bg-white p-4" ref={mainRef}>
           <ul className="flex flex-col gap-4">
