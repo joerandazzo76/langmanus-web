@@ -34,6 +34,7 @@ export function WorkflowProgressView({
   workflow: Workflow;
 }) {
   const mainRef = useRef<HTMLDivElement>(null);
+  const blockRef = useRef<HTMLDivElement>(null);
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [blockWidth, setBlockWidth] = useState(928);
@@ -51,7 +52,13 @@ export function WorkflowProgressView({
   useEffect(() => {
     if (isExpanded) {
       setBlockWidth(1200);
-      setBlockHeight(500);
+      setBlockHeight(window.innerHeight - 320);
+      if (blockRef.current) {
+        blockRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
     } else {
       setBlockWidth(928);
       setBlockHeight(400);
@@ -61,11 +68,16 @@ export function WorkflowProgressView({
   return (
     <div className="relative flex flex-col gap-4">
       <div
+        ref={blockRef}
         className={cn(
-          `flex h-[${blockHeight}px] w-[${blockWidth}px] overflow-hidden rounded-2xl border transition-all duration-300`,
+          `flex overflow-hidden rounded-2xl border transition-all duration-300`,
           className,
           isExpanded && "translate-x-[-136px]",
         )}
+        style={{
+          width: blockWidth,
+          height: blockHeight,
+        }}
       >
         <aside className="relative flex w-[220px] shrink-0 flex-col border-r bg-[rgba(0,0,0,0.02)]">
           <div className="shrink-0 px-4 py-4 font-medium">Flow</div>
