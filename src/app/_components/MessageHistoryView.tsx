@@ -53,7 +53,7 @@ function MessageView({ message }: { message: Message }) {
   } else if (message.type === "workflow") {
     return (
       <WorkflowProgressView
-        className="mb-8 max-h-[400px] min-h-[400px] max-w-[928px] min-w-[928px]"
+        className="mb-8"
         workflow={message.content.workflow}
       />
     );
