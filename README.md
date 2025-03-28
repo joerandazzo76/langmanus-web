@@ -49,7 +49,7 @@ cp .env.example .env
 
 ```bash
 # Clone the repository
-git clone https://github.com/langmanus/langmanus-web.git
+git clone https://github.com/joerandazzo76/langmanus-web
 cd langmanus-web
 
 # Install dependencies
